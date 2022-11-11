@@ -9,6 +9,7 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
 
 class MusicPlayerService : Service() {
 
@@ -64,7 +65,23 @@ class MusicPlayerService : Service() {
     fun isPlaying() : Boolean {
         return (mMediaPlayer != null && mMediaPlayer?.isPlaying ?: false)
     }
-    fun play() {}
+
+    fun play() {
+        if (mMediaPlayer == null) {
+            mMediaPlayer = MediaPlayer.create(this, R.raw.NextLevel)
+
+            mMediaPlayer?.setVolume(1.0f, 1.0f);
+            mMediaPlayer?.isLooping = true
+            mMediaPlayer?.start()
+        } else {
+            if (mMediaPlayer!!.isPlaying) {
+                Toast.makeText(this, "이미 음악이 실행 중입니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                mMediaPlayer?.start()
+            }
+        }
+    }
+
     fun pause() {}
     fun stop() {}
 }
