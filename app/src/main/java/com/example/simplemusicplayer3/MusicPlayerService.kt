@@ -1,9 +1,13 @@
 package com.example.simplemusicplayer3
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 
 class MusicPlayerService : Service() {
@@ -32,12 +36,34 @@ class MusicPlayerService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            stopForeground(true);
+        }
     }
 
     fun startForegroundService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val mChannel = NotificationChannel (
+                "CHANNEL_ID",
+                "CHANNEL_NAME",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(mChannel)
+        }
 
+        val notification: Notification = Notification.Builder(this, "CHANNEL_ID")
+            .setSmallIcon(R.drawable.ic_play)
+            .setContentTitle("뮤직 플레이어 앱")
+            .setContentText("앱이 실행 중입니다.")
+            .build()
+
+        startForeground(1, notification)
     }
-    fun isPlaying() {}
+
+    fun isPlaying() : Boolean {
+        return (mMediaPlayer != null && mMediaPlayer?.isPlaying ?: false)
+    }
     fun play() {}
     fun pause() {}
     fun stop() {}
