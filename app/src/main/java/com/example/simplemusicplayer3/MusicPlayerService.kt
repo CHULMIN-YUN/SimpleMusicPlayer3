@@ -82,6 +82,21 @@ class MusicPlayerService : Service() {
         }
     }
 
-    fun pause() {}
-    fun stop() {}
+    fun pause() {
+        mMediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+            }
+        }
+    }
+
+    fun stop() {
+        mMediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+                it.release()
+                mMediaPlayer = null
+            }
+        }
+    }
 }
